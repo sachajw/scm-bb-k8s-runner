@@ -4,6 +4,9 @@ metadata:
   name: runner
   namespace: bb-runner
 spec:
+  backoffLimit: 6
+  completions: 1
+  parallelism: 3
   template:
     metadata:
       labels:
@@ -18,6 +21,13 @@ spec:
       containers:
         - name: bitbucket-k8s-runner
           image: docker-public.packages.atlassian.com/sox/atlassian/bitbucket-pipelines-runner
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
           env:
             - name: ACCOUNT_UUID
               value: "{ACCOUNT UUID GOES HERE BETWEEN THE CURLY}"
@@ -59,6 +69,3 @@ spec:
         - name: tmp
         - name: docker-containers
         - name: var-run
-  backoffLimit: 6
-  completions: 1
-  parallelism: 1
