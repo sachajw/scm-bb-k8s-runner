@@ -1,0 +1,64 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: runner
+  namespace: bb-runner
+spec:
+  template:
+    metadata:
+      labels:
+        accountUuid: ACCOUNT UUID GOES HERE # no quotes at all
+        runnerUuid: RUNNER UUID GOES HERE # no quotes at all
+    spec:
+      dnsPolicy: ClusterFirstWithHostNet
+      dnsConfig:
+        nameservers:
+          - 1.0.0.1
+          - 1.1.1.1
+      containers:
+        - name: bitbucket-k8s-runner
+          image: docker-public.packages.atlassian.com/sox/atlassian/bitbucket-pipelines-runner
+          env:
+            - name: ACCOUNT_UUID
+              value: "{ACCOUNT UUID GOES HERE BETWEEN THE CURLY}"
+            - name: RUNNER_UUID
+              value: "{RUNNER UUID GOES HERE BETWEEN THE CURLYS}"
+            - name: OAUTH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: runner-oauth-credentials
+                  key: oauthClientId
+            - name: OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: runner-oauth-credentials
+                  key: oauthClientSecret
+            - name: WORKING_DIRECTORY
+              value: "/tmp"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: docker-containers
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+            - name: var-run
+              mountPath: /var/run
+        - name: docker-in-docker
+          image: docker:20.10.7-dind
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: docker-containers
+              mountPath: /var/lib/docker/containers
+            - name: var-run
+              mountPath: /var/run
+      restartPolicy: OnFailure
+      volumes:
+        - name: tmp
+        - name: docker-containers
+        - name: var-run
+  backoffLimit: 6
+  completions: 1
+  parallelism: 1

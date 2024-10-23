@@ -1,0 +1,7 @@
+export ACCOUNT_UUID=""
+export RUNNER_UUID=""
+export OAUTH_CLIENT_ID=""
+export OAUTH_CLIENT_SECRET=""
+
+export BASE64_OAUTH_CLIENT_ID=$(echo -n $OAUTH_CLIENT_ID | base64)
+export BASE64_OAUTH_CLIENT_SECRET=$(echo -n $OAUTH_CLIENT_SECRET | base64)
