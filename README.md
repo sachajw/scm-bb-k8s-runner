@@ -53,11 +53,11 @@ kind: Secret
 metadata:
   name: runner-oauth-credentials
   labels:
-    accountUuid: ${ACCOUNT_UUID}
-    runnerUuid: ${RUNNER_UUID}
+    accountUuid: ACCOUNT_UUID
+    runnerUuid: RUNNER_UUID
 data:
-  oauthClientId: ${BASE64_OAUTH_CLIENT_ID}
-  oauthClientSecret: ${BASE64_OAUTH_CLIENT_SECRET}
+  oauthClientId: BASE64_OAUTH_CLIENT_ID
+  oauthClientSecret: BASE64_OAUTH_CLIENT_SECRET
 EOF
 ```
 
